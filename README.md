@@ -248,14 +248,21 @@ tests/             30 tests with a fake LLM (no API key needed)
 
 ## Design choices and trade-offs
 
-**LangGraph only for control flow; everything else is plain Python.**
-The generate → evaluate → revise loop is a small state machine. LangGraph lets me declare it
-as nodes and conditional edges, and the architecture diagram is generated from the real code,
-so it cannot drift out of date. LangGraph is kept thin: it lives in one ~50-line file, and every
-node is a plain function (state in → changed fields out). The nodes are easy to unit-test, and
-the framework could be swapped for a `while` loop in a few minutes. I deliberately did **not**
-use LangChain or LangGraph's checkpointer. The checkpointer saves the state of one run, but
-the memory here must carry lessons *across* runs, and a JSON file is simpler and easy to inspect.
+**Stack: LangGraph for the loop, plain Python + API for everything else.**
+The brief allowed n8n, LangGraph, LangChain or Python + API. I chose LangGraph and Python + API,
+and each one paid off in concrete ways during the build:
+
+| Choice | How it helped in this project |
+|---|---|
+| **LangGraph** for orchestration | The core decision (pass → finalize, fail → revise, out of retries → BLOCKED) is one routing function wired with `add_conditional_edges`: explicit, readable and tested. Adding the `--inject-error` demo step was **one new node and one conditional edge**, with no other step changed. The architecture diagram is **generated from the code**, so it cannot drift out of date. LangGraph's step limit is a second safety net on top of the retry cap. |
+| **Plain Python + the OpenAI-compatible API** for everything else | Every real problem found during testing was fixed in a few lines, because the client code is ours: a model Groq had retired (config change), silently cut-off lessons (read the raw `finish_reason`), JSON rejected by the provider (plain-text fallback), token limits (`reasoning_effort`), cost visibility (read the raw `usage`). One small client works with every provider; adding GitHub Models as a backup took 9 lines of config. The 6 code checks are plain functions, and the whole system talks to models through **one method**, so testing offline with a fake model was trivial. |
+| **Not LangChain** | It mainly wraps model calls, prompt templates and output parsers. This system needs one thing from a model (send a prompt, get text back) and needed the *raw* response details (finish reason, token usage, rate-limit headers) that wrappers tend to hide. Fewer layers means fewer dependencies and easier debugging. |
+| **Not n8n** | A visual, no-code tool that is excellent for connecting apps. The core here is logic (12 checks, quote verification, memory) that needs unit tests and version control, which is simpler in code. |
+
+LangGraph is kept thin: it lives in one ~50-line file, and every node is a plain function (state
+in → changed fields out), so the framework could be swapped for a `while` loop in minutes. I also
+did **not** use LangGraph's checkpointer: it saves the state of one run, but the memory here must
+carry lessons *across* runs, and a JSON file is simpler and easy to inspect.
 
 **Hybrid evaluator: code first, LLM only where code cannot judge.**
 Anything measurable (sections, length, readability, blocklists, glossary, quiz) is checked by
