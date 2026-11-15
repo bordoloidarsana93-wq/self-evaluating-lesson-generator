@@ -1,0 +1,7 @@
+# Runtime
+langgraph==1.2.22      # orchestrates the plan -> generate -> evaluate -> revise loop
+openai==3.51.0         # one client for Groq, Gemini and OpenAI (OpenAI-compatible APIs)
+python-dotenv==1.2.4   # loads API keys from .env
+
+# Tests
+pytest==9.2.0

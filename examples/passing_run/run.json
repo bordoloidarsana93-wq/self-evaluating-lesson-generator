@@ -1,0 +1,296 @@
+{
+  "run_id": "20261115-160508-d658",
+  "topic": "Introduction to RAG (Retrieval-Augmented Generation)",
+  "started_at": "2026-11-15T10:35:08+00:00",
+  "status": "PASSED",
+  "best_attempt": 2,
+  "inject_error": false,
+  "settings": {
+    "provider": "groq",
+    "generator_model": "qwen/qwen3.8-27b",
+    "judge_model": "openai/gpt-oss-120b",
+    "max_retries": 2
+  },
+  "plan": "**Lesson Plan: Introduction to RAG**\n\n**1. Section Breakdown**\n*   **What is RAG:** Define RAG as a way to give AI \"notes\" before it answers. Use the analogy of a student opening a textbook to answer an exam question.\n*   **Why it matters:** Explain that LLMs have \"memory gaps\" or \"hallucinate\" (make up facts). RAG fixes this by using real, up-to-date documents. Mention it is cheaper than training new models.\n*   **How it works:** Break down the three steps: Retrieve (find info), Augment (add info to question), Generate (write answer). Explain that this happens in milliseconds.\n*   **Worked example:** Trace the Indian example (see below) through the three steps. Show how the system finds the specific rule, adds it to the prompt, and then generates the final reply.\n*   **Key words:** Define Chunking, Embeddings, and Vector Database. Explain that Chunking splits text, Embeddings turn words into numbers, and Vector Databases store these numbers for fast searching.\n*   **Recap:** Summarize the flow: Documents -> Chunking -> Embeddings -> Storage -> User Question -> Search -> Answer.\n*   **Check your understanding:** Three simple questions. One true/false, one matching terms to definitions, and one scenario identifying if RAG is needed.\n\n**2. Worked Example**\n**Scenario:** A student asks an AI chatbot: *\"What are the fees for the Class 10 board exam in UP?\"*\n*   **Retrieve:** The system searches a stored PDF of \"UP Board Fee Rules.\" It ignores pages about theory exams and finds the small text chunk listing \"Practical Exam Fee: ₹500.\"\n*   **Augment:** The system creates a new prompt for the AI: *\"Here is the rule: 'Practical Exam Fee: ₹500'. Now answer: What are the fees for the Class 10 board exam?\"*\n*   **Generate:** The AI reads the provided rule and replies: *\"According to the UP Board rules, the practical exam fee is ₹500.\"*\n\n**3. Technical Terms Order**\n1.  LLM (Large Language Model)\n2.  Hallucination\n3.  Retrieve\n4.  Augment\n5.  Generate\n6.  Chunking\n7.  Embeddings\n8.  Vector Database\n9.  Similarity Search\n10. Fine-tuning",
+  "memory_rules_used": [
+    "Define every technical term immediately before its first use in the text.",
+    "Replace all metaphors, idioms, and figurative language with plain, literal explanations.",
+    "Verify claims against references to avoid overstating capabilities or contradicting source material.",
+    "Ensure new concepts are introduced and defined before being referenced in summaries."
+  ],
+  "new_rules": [
+    "Define every technical term immediately before its first use in the text.",
+    "Ensure quiz sections contain at least three numbered questions, each followed by a labeled answer.",
+    "List all technical terms used in the lesson body within the Key words section."
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "lesson": "# Introduction to RAG (Retrieval-Augmented Generation)\n\n## What is RAG\n\nImagine you are a student in an exam. You do not remember everything. So, you open your textbook. You find the right page. Then, you write the answer.\n\nRAG works the same way. RAG stands for Retrieval-Augmented Generation. It is a method for AI. Before an AI answers a question, it looks for help. It searches a set of documents. It finds the most useful text. Then, it uses that text to answer.\n\nWe use a Large Language Model (LLM) for this. An LLM is a type of AI. It is trained on huge amounts of text. It can write, summarize, and chat. But it only knows what it learned during training. It does not know new or private information. RAG fixes this. It gives the AI specific \"notes\" for each question.\n\n## Why it matters\n\nLLMs have a problem. They sometimes \"hallucinate.\" This word means the AI makes up facts. It writes fluent, smooth text. But the text is false. This is dangerous. If a doctor asks about a drug, a wrong answer is bad.\n\nRAG helps reduce this. It grounds the answer in real documents. The AI reads a rule book or a help article. It answers based on that text. This makes answers more accurate. It also keeps information up to date. If a fee changes, you update the document. You do not need to retrain the AI. This saves money and time.\n\nConsider a real-world use case. A college wants a chatbot for students. Students ask, \"What is the exam fee?\" The chatbot searches the college rule book. It finds the exact fee. It answers correctly. Without RAG, the AI might guess. Or it might give an old fee from its training data. RAG ensures the answer comes from the current rule book.\n\n## How it works\n\nRAG has two main phases. First is storage. Second is answering.\n\nIn the storage phase, we prepare documents. We take PDFs, web pages, or notes. We split them into small pieces. This is called **chunking**. A chunk is a small part of text. It might be one paragraph. We do this so the AI can find specific details.\n\nNext, we process each chunk. We use an embedding model. This model turns text into numbers. These numbers are called **embeddings**. An embedding is a list of numbers. It captures the meaning of the text. Words with similar meaning get similar numbers.\n\nWe store these numbers in a **vector database**. A vector is just a list of numbers. A vector database is special software. It stores these lists. It can find similar lists very fast.\n\nIn the answering phase, a user asks a question. The system turns the question into an embedding. Then, it runs a **similarity search**. This search looks for chunks with similar meaning. It finds the top few chunks. This is called **retrieving**.\n\nNow, the system **augments** the prompt. A **prompt** is the instruction you give to the AI. The system adds the retrieved chunks to the question. It creates a new, longer prompt.\n\nFinally, the LLM **generates** the answer. It reads the new prompt. It writes a response. It uses the provided text as the main source of facts.\n\n## Worked example\n\nLet us trace a specific example. A student asks an AI chatbot: \"What are the fees for the Class 10 board exam in UP?\"\n\nFirst, the **Retrieve** step happens. The system searches a stored PDF of \"UP Board Fee Rules.\" It ignores pages about theory exams. It finds a small text chunk. This chunk says: \"Practical Exam Fee: ₹500.\"\n\nSecond, the **Augment** step happens. The system creates a new prompt for the AI. It combines the rule with the question. The new prompt says: \"Here is the rule: 'Practical Exam Fee: ₹500'. Now answer: What are the fees for the Class 10 board exam?\"\n\nThird, the **Generate** step happens. The AI reads this new prompt. It sees the specific rule. It writes the final reply. The reply is: \"According to the UP Board rules, the practical exam fee is ₹500.\"\n\nThis process is fast. It happens in milliseconds. The user just sees a quick, correct answer.\n\n## Limits, and RAG compared with fine-tuning\n\nRAG has limits. First, if the retrieval is bad, the answer is bad. If the system finds the wrong chunk, the AI will give a wrong answer. The AI trusts the text it is given.\n\nSecond, source quality matters. If the documents are wrong or old, the answer is wrong. You must keep your documents updated.\n\nThird, there is a **context window**. An LLM can only read a limited amount of text at once. This limit is measured in **tokens**. A token is a piece of a word. If you give too many chunks, the AI cannot read them all. So, you must pick the most relevant chunks.\n\nFourth, the AI can still make mistakes. It might misread the text. It might still hallucinate, though less often.\n\nNow, let us compare RAG with **fine-tuning**. Fine-tuning means training the model more. You give it your own examples. This changes the model's weights. The model learns new patterns or styles.\n\nRAG does not change the model. The model stays the same. RAG only gives it extra text at answer time.\n\nUse RAG for facts that change often. For example, prices, dates, or policies. Use fine-tuning for style or behavior. For example, making the AI sound friendly. RAG is cheaper for updating knowledge. You just update files. Fine-tuning requires new training. This is slower and costlier.\n\n## Key words\n\n- **Chunking**: Splitting long documents into smaller pieces of text so they are easier to search and use.\n- **Embeddings**: Lists of numbers that represent the meaning of text, allowing computers to compare meanings.\n- **Vector Database**: Software that stores embeddings and allows for fast similarity searches.\n- **Similarity Search**: A process to find text chunks whose meaning is closest to a user's question.\n- **Prompt**: The input instruction given to an AI, which may include the question and retrieved context.\n- **Retrieval**: The step of finding the most relevant pieces of text from a collection of documents.\n- **Augmentation**: Adding the retrieved text to the prompt together with the user's question.\n- **Generation**: The step where the LLM writes the final answer using the provided context.\n- **LLM**: A Large Language Model, an AI system trained on large amounts of text to generate language.\n- **Hallucination**: When an AI produces fluent text that is factually incorrect or made up.\n- **Context Window**: The maximum amount of text an LLM can process at one time.\n- **Fine-tuning**: Further training an existing AI model on specific data to change its behavior.\n\n## Recap\n\nLet us summarize the flow. First, we have documents. We split them into chunks. We turn chunks into embeddings. We store these in a vector database.\n\nThen, a user asks a question. The question becomes an embedding. The system runs a similarity search. It finds the best matching chunks. These chunks are added to the prompt. This is augmentation.\n\nFinally, the LLM generates the answer. It uses the retrieved text as its source. This makes the answer grounded in real data. The model itself is not changed. It just gets better notes for each question.\n\n## Check your understanding\n\n1. True or False: RAG changes the internal weights of the LLM to learn new facts.\n   **Answer:** False. RAG does not change the model. It only adds text to the prompt.\n\n2. Match the term to its simple definition:\n   - Chunking\n   - Embedding\n   - Vector Database\n   *Options: A. A list of numbers representing meaning. B. Software that stores numbers for fast search. C. Splitting text into small pieces.*\n   **Answer:** Chunking is C. Embedding is A. Vector Database is B.\n\n3. A company wants an AI to answer employee questions about the latest leave policy. The policy changes every quarter. Should they use RAG or fine-tuning?\n   **Answer:** They should use RAG. It is easier to update the policy document than to retrain the model.\n\n4. If the similarity search finds the wrong document chunk, what happens to the final answer?\n   **Answer:** The final answer will likely be wrong or incomplete because the AI relies on that retrieved text.",
+      "changes": [
+        "First draft."
+      ],
+      "checks": [
+        {
+          "id": "sections",
+          "name": "Required sections",
+          "kind": "code",
+          "passed": true,
+          "reason": "All required sections are present.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "word_count",
+          "name": "Word count",
+          "kind": "code",
+          "passed": true,
+          "reason": "1326 words (allowed 700-1800).",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "readability",
+          "name": "Readability",
+          "kind": "code",
+          "passed": true,
+          "reason": "Flesch 75.7, average sentence 7.3 words.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "hard_words",
+          "name": "No hard words",
+          "kind": "code",
+          "passed": true,
+          "reason": "No blocklisted words found.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "jargon_defined",
+          "name": "Jargon defined",
+          "kind": "code",
+          "passed": false,
+          "reason": "1 technical term(s) are used but not defined in 'Key words'.",
+          "evidence": "'token' used in ...xt at once. This limit is measured in **tokens**. A token is a piece of a word. If you...",
+          "fix": "Add a simple definition to 'Key words' for: token (or remove the term if it is not needed).",
+          "overruled": false
+        },
+        {
+          "id": "quiz",
+          "name": "Quiz with answers",
+          "kind": "code",
+          "passed": false,
+          "reason": "Need at least 3 numbered questions, each with an answer. Found 2 question(s), 4 answer(s).",
+          "evidence": "2 question(s), 4 answer(s).",
+          "fix": "In 'Check your understanding', write at least 3 numbered questions ending in '?', each followed by a line starting with '**Answer:**'.",
+          "overruled": false
+        },
+        {
+          "id": "accuracy",
+          "name": "Accurate & grounded",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All factual statements align with the reference sheet; no contradictions found.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "coverage",
+          "name": "Covers key points",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All 9 must-cover points are explained, each proven by a verified quote.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "unexplained_jargon",
+          "name": "No unexplained jargon",
+          "kind": "judge",
+          "passed": false,
+          "reason": "Uses technical term \"weights\" without explanation",
+          "evidence": "\"changes the model's weights.\"",
+          "fix": "Add a brief explanation for \"weights\", e.g., \"weights are the internal parameters of the model that are adjusted during training to learn patterns.\"",
+          "overruled": false
+        },
+        {
+          "id": "worked_example",
+          "name": "Teaches by a worked example",
+          "kind": "judge",
+          "passed": true,
+          "reason": "The lesson provides a concrete, India‑relevant worked example (Class 10 board exam fees in UP) that clearly walks through retrieve, augment, and generate steps.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "flow",
+          "name": "Coherent flow",
+          "kind": "judge",
+          "passed": false,
+          "reason": "Terms like \"augments\", \"generates\", and \"retrieving\" are used before they are defined later in the key‑words section.",
+          "evidence": "\"Now, the system augments the prompt.\" | \"Finally, the LLM generates the answer.\" | \"It finds the top few chunks. This is called retrieving.\"",
+          "fix": "Introduce definitions of augmentation, generation, and retrieval (or retrieving) before their first occurrence, e.g., add brief explanations when the terms first appear.",
+          "overruled": false
+        },
+        {
+          "id": "simple_english",
+          "name": "Simple English",
+          "kind": "judge",
+          "passed": true,
+          "reason": "The lesson uses straightforward vocabulary, avoids idioms, slang, and overly complex sentences, meeting the Simple English criterion.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        }
+      ],
+      "passed": false,
+      "passed_count": 8,
+      "total": 12
+    },
+    {
+      "attempt": 2,
+      "lesson": "# Introduction to RAG (Retrieval-Augmented Generation)\n\n## What is RAG\n\nImagine you are a student in an exam. You do not remember everything. So, you open your textbook. You find the right page. Then, you write the answer.\n\nRAG works the same way. RAG stands for Retrieval-Augmented Generation. It is a method for AI. Before an AI answers a question, it looks for help. It searches a set of documents. It finds the most useful text. Then, it uses that text to answer.\n\nWe use a Large Language Model (LLM) for this. An LLM is a type of AI. It is trained on huge amounts of text. It can write, summarize, and chat. But it only knows what it learned during training. It does not know new or private information. RAG fixes this. It gives the AI specific \"notes\" for each question.\n\n## Why it matters\n\nLLMs have a problem. They sometimes \"hallucinate.\" This word means the AI makes up facts. It writes fluent, smooth text. But the text is false. This is dangerous. If a doctor asks about a drug, a wrong answer is bad.\n\nRAG helps reduce this. It grounds the answer in real documents. The AI reads a rule book or a help article. It answers based on that text. This makes answers more accurate. It also keeps information up to date. If a fee changes, you update the document. You do not need to retrain the AI. This saves money and time.\n\nConsider a real-world use case. A college wants a chatbot for students. Students ask, \"What is the exam fee?\" The chatbot searches the college rule book. It finds the exact fee. It answers correctly. Without RAG, the AI might guess. Or it might give an old fee from its training data. RAG ensures the answer comes from the current rule book.\n\n## How it works\n\nRAG has two main phases. First is storage. Second is answering.\n\nIn the storage phase, we prepare documents. We take PDFs, web pages, or notes. We split them into small pieces. This is called **chunking**. A chunk is a small part of text. It might be one paragraph. We do this so the AI can find specific details.\n\nNext, we process each chunk. We use an embedding model. This model turns text into numbers. These numbers are called **embeddings**. An embedding is a list of numbers. It captures the meaning of the text. Words with similar meaning get similar numbers.\n\nWe store these numbers in a **vector database**. A vector is just a list of numbers. A vector database is special software. It stores these lists. It can find similar lists very fast.\n\nIn the answering phase, a user asks a question. The system turns the question into an embedding. Then, it runs a **similarity search**. This search looks for chunks with similar meaning. It finds the top few chunks. This step is called **retrieving**. Retrieving means finding the right text pieces.\n\nNow, the system **augments** the prompt. Augmentation means adding extra information. A **prompt** is the instruction you give to the AI. The system adds the retrieved chunks to the question. It creates a new, longer prompt.\n\nFinally, the LLM **generates** the answer. Generation means creating new text. It reads the new prompt. It writes a response. It uses the provided text as the main source of facts.\n\n## Worked example\n\nLet us trace a specific example. A student asks an AI chatbot: \"What are the fees for the Class 10 board exam in UP?\"\n\nFirst, the **Retrieve** step happens. The system searches a stored PDF of \"UP Board Fee Rules.\" It ignores pages about theory exams. It finds a small text chunk. This chunk says: \"Practical Exam Fee: ₹500.\"\n\nSecond, the **Augment** step happens. The system creates a new prompt for the AI. It combines the rule with the question. The new prompt says: \"Here is the rule: 'Practical Exam Fee: ₹500'. Now answer: What are the fees for the Class 10 board exam?\"\n\nThird, the **Generate** step happens. The AI reads this new prompt. It sees the specific rule. It writes the final reply. The reply is: \"According to the UP Board rules, the practical exam fee is ₹500.\"\n\nThis process is fast. It happens in milliseconds. The user just sees a quick, correct answer.\n\n## Limits, and RAG compared with fine-tuning\n\nRAG has limits. First, if the retrieval is bad, the answer is bad. If the system finds the wrong chunk, the AI will give a wrong answer. The AI trusts the text it is given.\n\nSecond, source quality matters. If the documents are wrong or old, the answer is wrong. You must keep your documents updated.\n\nThird, there is a **context window**. An LLM can only read a limited amount of text at once. This limit is measured in **tokens**. A token is a small unit of text. It is often a piece of a word. If you give too many chunks, the AI cannot read them all. So, you must pick the most relevant chunks.\n\nFourth, the AI can still make mistakes. It might misread the text. It might still hallucinate, though less often.\n\nNow, let us compare RAG with **fine-tuning**. Fine-tuning means training the model more. You give it your own examples. This changes the model's weights. Weights are the internal settings of the model. They are adjusted during training to learn patterns.\n\nRAG does not change the model. The model stays the same. RAG only gives it extra text at answer time.\n\nUse RAG for facts that change often. For example, prices, dates, or policies. Use fine-tuning for style or behavior. For example, making the AI sound friendly. RAG is cheaper for updating knowledge. You just update files. Fine-tuning requires new training. This is slower and costlier.\n\n## Key words\n\n- **Chunking**: Splitting long documents into smaller pieces of text so they are easier to search and use.\n- **Embeddings**: Lists of numbers that represent the meaning of text, allowing computers to compare meanings.\n- **Vector Database**: Software that stores embeddings and allows for fast similarity searches.\n- **Similarity Search**: A process to find text chunks whose meaning is closest to a user's question.\n- **Prompt**: The input instruction given to an AI, which may include the question and retrieved context.\n- **Retrieval**: The step of finding the most relevant pieces of text from a collection of documents.\n- **Augmentation**: Adding the retrieved text to the prompt together with the user's question.\n- **Generation**: The step where the LLM writes the final answer using the provided context.\n- **LLM**: A Large Language Model, an AI system trained on large amounts of text to generate language.\n- **Hallucination**: When an AI produces fluent text that is factually incorrect or made up.\n- **Context Window**: The maximum amount of text an LLM can process at one time.\n- **Fine-tuning**: Further training an existing AI model on specific data to change its behavior.\n- **Token**: A small unit of text used to measure the length of input or output.\n\n## Recap\n\nLet us summarize the flow. First, we have documents. We split them into chunks. We turn chunks into embeddings. We store these in a vector database.\n\nThen, a user asks a question. The question becomes an embedding. The system runs a similarity search. It finds the best matching chunks. These chunks are added to the prompt. This is augmentation.\n\nFinally, the LLM generates the answer. It uses the retrieved text as its source. This makes the answer grounded in real data. The model itself is not changed. It just gets better notes for each question.\n\n## Check your understanding\n\n1. True or False: RAG changes the internal weights of the LLM to learn new facts.\n   **Answer:** False. RAG does not change the model. It only adds text to the prompt.\n\n2. What is the main purpose of chunking documents in RAG?\n   **Answer:** To split long texts into small pieces so the AI can find specific details easily.\n\n3. A company wants an AI to answer employee questions about the latest leave policy. The policy changes every quarter. Should they use RAG or fine-tuning?\n   **Answer:** They should use RAG. It is easier to update the policy document than to retrain the model.\n\n4. If the similarity search finds the wrong document chunk, what happens to the final answer?\n   **Answer:** The final answer will likely be wrong or incomplete because the AI relies on that retrieved text.",
+      "changes": [
+        "Added definition for 'token' in the 'Key words' section.",
+        "Replaced the matching question in 'Check your understanding' with a direct question to ensure 3 simple numbered questions with answers.",
+        "Added a brief explanation for 'weights' in the 'Limits' section.",
+        "Added brief definitions for 'retrieving', 'augments', and 'generates' at their first occurrence in the 'How it works' section."
+      ],
+      "checks": [
+        {
+          "id": "sections",
+          "name": "Required sections",
+          "kind": "code",
+          "passed": true,
+          "reason": "All required sections are present.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "word_count",
+          "name": "Word count",
+          "kind": "code",
+          "passed": true,
+          "reason": "1358 words (allowed 700-1800).",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "readability",
+          "name": "Readability",
+          "kind": "code",
+          "passed": true,
+          "reason": "Flesch 75.4, average sentence 7.7 words.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "hard_words",
+          "name": "No hard words",
+          "kind": "code",
+          "passed": true,
+          "reason": "No blocklisted words found.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "jargon_defined",
+          "name": "Jargon defined",
+          "kind": "code",
+          "passed": true,
+          "reason": "Every technical term used is in Key words.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "quiz",
+          "name": "Quiz with answers",
+          "kind": "code",
+          "passed": true,
+          "reason": "3 question(s), 4 answer(s).",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "accuracy",
+          "name": "Accurate & grounded",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All factual statements in the lesson are consistent with the reference sheet.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "coverage",
+          "name": "Covers key points",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All 9 must-cover points are explained, each proven by a verified quote.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "unexplained_jargon",
+          "name": "No unexplained jargon",
+          "kind": "judge",
+          "passed": true,
+          "reason": "No unexplained jargon found.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "worked_example",
+          "name": "Teaches by a worked example",
+          "kind": "judge",
+          "passed": true,
+          "reason": "Provides a concrete Indian example (Class 10 board fee) and clearly walks through retrieve, augment, generate steps",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "flow",
+          "name": "Coherent flow",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All key terms are introduced before or at their first use, providing immediate definitions where needed.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "simple_english",
+          "name": "Simple English",
+          "kind": "judge",
+          "passed": true,
+          "reason": "The lesson uses straightforward vocabulary and sentence structures without idioms, slang, or overly complex sentences.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        }
+      ],
+      "passed": true,
+      "passed_count": 12,
+      "total": 12
+    }
+  ],
+  "final_lesson": "# Introduction to RAG (Retrieval-Augmented Generation)\n\n## What is RAG\n\nImagine you are a student in an exam. You do not remember everything. So, you open your textbook. You find the right page. Then, you write the answer.\n\nRAG works the same way. RAG stands for Retrieval-Augmented Generation. It is a method for AI. Before an AI answers a question, it looks for help. It searches a set of documents. It finds the most useful text. Then, it uses that text to answer.\n\nWe use a Large Language Model (LLM) for this. An LLM is a type of AI. It is trained on huge amounts of text. It can write, summarize, and chat. But it only knows what it learned during training. It does not know new or private information. RAG fixes this. It gives the AI specific \"notes\" for each question.\n\n## Why it matters\n\nLLMs have a problem. They sometimes \"hallucinate.\" This word means the AI makes up facts. It writes fluent, smooth text. But the text is false. This is dangerous. If a doctor asks about a drug, a wrong answer is bad.\n\nRAG helps reduce this. It grounds the answer in real documents. The AI reads a rule book or a help article. It answers based on that text. This makes answers more accurate. It also keeps information up to date. If a fee changes, you update the document. You do not need to retrain the AI. This saves money and time.\n\nConsider a real-world use case. A college wants a chatbot for students. Students ask, \"What is the exam fee?\" The chatbot searches the college rule book. It finds the exact fee. It answers correctly. Without RAG, the AI might guess. Or it might give an old fee from its training data. RAG ensures the answer comes from the current rule book.\n\n## How it works\n\nRAG has two main phases. First is storage. Second is answering.\n\nIn the storage phase, we prepare documents. We take PDFs, web pages, or notes. We split them into small pieces. This is called **chunking**. A chunk is a small part of text. It might be one paragraph. We do this so the AI can find specific details.\n\nNext, we process each chunk. We use an embedding model. This model turns text into numbers. These numbers are called **embeddings**. An embedding is a list of numbers. It captures the meaning of the text. Words with similar meaning get similar numbers.\n\nWe store these numbers in a **vector database**. A vector is just a list of numbers. A vector database is special software. It stores these lists. It can find similar lists very fast.\n\nIn the answering phase, a user asks a question. The system turns the question into an embedding. Then, it runs a **similarity search**. This search looks for chunks with similar meaning. It finds the top few chunks. This step is called **retrieving**. Retrieving means finding the right text pieces.\n\nNow, the system **augments** the prompt. Augmentation means adding extra information. A **prompt** is the instruction you give to the AI. The system adds the retrieved chunks to the question. It creates a new, longer prompt.\n\nFinally, the LLM **generates** the answer. Generation means creating new text. It reads the new prompt. It writes a response. It uses the provided text as the main source of facts.\n\n## Worked example\n\nLet us trace a specific example. A student asks an AI chatbot: \"What are the fees for the Class 10 board exam in UP?\"\n\nFirst, the **Retrieve** step happens. The system searches a stored PDF of \"UP Board Fee Rules.\" It ignores pages about theory exams. It finds a small text chunk. This chunk says: \"Practical Exam Fee: ₹500.\"\n\nSecond, the **Augment** step happens. The system creates a new prompt for the AI. It combines the rule with the question. The new prompt says: \"Here is the rule: 'Practical Exam Fee: ₹500'. Now answer: What are the fees for the Class 10 board exam?\"\n\nThird, the **Generate** step happens. The AI reads this new prompt. It sees the specific rule. It writes the final reply. The reply is: \"According to the UP Board rules, the practical exam fee is ₹500.\"\n\nThis process is fast. It happens in milliseconds. The user just sees a quick, correct answer.\n\n## Limits, and RAG compared with fine-tuning\n\nRAG has limits. First, if the retrieval is bad, the answer is bad. If the system finds the wrong chunk, the AI will give a wrong answer. The AI trusts the text it is given.\n\nSecond, source quality matters. If the documents are wrong or old, the answer is wrong. You must keep your documents updated.\n\nThird, there is a **context window**. An LLM can only read a limited amount of text at once. This limit is measured in **tokens**. A token is a small unit of text. It is often a piece of a word. If you give too many chunks, the AI cannot read them all. So, you must pick the most relevant chunks.\n\nFourth, the AI can still make mistakes. It might misread the text. It might still hallucinate, though less often.\n\nNow, let us compare RAG with **fine-tuning**. Fine-tuning means training the model more. You give it your own examples. This changes the model's weights. Weights are the internal settings of the model. They are adjusted during training to learn patterns.\n\nRAG does not change the model. The model stays the same. RAG only gives it extra text at answer time.\n\nUse RAG for facts that change often. For example, prices, dates, or policies. Use fine-tuning for style or behavior. For example, making the AI sound friendly. RAG is cheaper for updating knowledge. You just update files. Fine-tuning requires new training. This is slower and costlier.\n\n## Key words\n\n- **Chunking**: Splitting long documents into smaller pieces of text so they are easier to search and use.\n- **Embeddings**: Lists of numbers that represent the meaning of text, allowing computers to compare meanings.\n- **Vector Database**: Software that stores embeddings and allows for fast similarity searches.\n- **Similarity Search**: A process to find text chunks whose meaning is closest to a user's question.\n- **Prompt**: The input instruction given to an AI, which may include the question and retrieved context.\n- **Retrieval**: The step of finding the most relevant pieces of text from a collection of documents.\n- **Augmentation**: Adding the retrieved text to the prompt together with the user's question.\n- **Generation**: The step where the LLM writes the final answer using the provided context.\n- **LLM**: A Large Language Model, an AI system trained on large amounts of text to generate language.\n- **Hallucination**: When an AI produces fluent text that is factually incorrect or made up.\n- **Context Window**: The maximum amount of text an LLM can process at one time.\n- **Fine-tuning**: Further training an existing AI model on specific data to change its behavior.\n- **Token**: A small unit of text used to measure the length of input or output.\n\n## Recap\n\nLet us summarize the flow. First, we have documents. We split them into chunks. We turn chunks into embeddings. We store these in a vector database.\n\nThen, a user asks a question. The question becomes an embedding. The system runs a similarity search. It finds the best matching chunks. These chunks are added to the prompt. This is augmentation.\n\nFinally, the LLM generates the answer. It uses the retrieved text as its source. This makes the answer grounded in real data. The model itself is not changed. It just gets better notes for each question.\n\n## Check your understanding\n\n1. True or False: RAG changes the internal weights of the LLM to learn new facts.\n   **Answer:** False. RAG does not change the model. It only adds text to the prompt.\n\n2. What is the main purpose of chunking documents in RAG?\n   **Answer:** To split long texts into small pieces so the AI can find specific details easily.\n\n3. A company wants an AI to answer employee questions about the latest leave policy. The policy changes every quarter. Should they use RAG or fine-tuning?\n   **Answer:** They should use RAG. It is easier to update the policy document than to retrain the model.\n\n4. If the similarity search finds the wrong document chunk, what happens to the final answer?\n   **Answer:** The final answer will likely be wrong or incomplete because the AI relies on that retrieved text."
+}

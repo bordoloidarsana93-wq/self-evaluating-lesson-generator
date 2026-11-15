@@ -1,0 +1,26 @@
+{
+  "topic": "Introduction to RAG (Retrieval-Augmented Generation)",
+  "audience": "A 12th-grade graduate from India with limited English vocabulary, from a non-English-medium school, who wants to start a career in AI. Assume they start from zero.",
+  "required_sections": [
+    "What is RAG",
+    "Why it matters",
+    "How it works",
+    "Worked example",
+    "Key words",
+    "Recap",
+    "Check your understanding"
+  ],
+  "glossary_section": "Key words",
+  "quiz_section": "Check your understanding",
+  "must_cover": [
+    {"id": "retrieve", "point": "Retrieve: finding the most relevant pieces of text from a collection of documents"},
+    {"id": "augment", "point": "Augment: adding the retrieved text to the prompt together with the question"},
+    {"id": "generate", "point": "Generate: the LLM writes the answer using the retrieved text"},
+    {"id": "chunking", "point": "Chunking: splitting documents into small pieces before storing them"},
+    {"id": "embeddings", "point": "Embeddings: turning text into lists of numbers that capture meaning"},
+    {"id": "similarity_search", "point": "Similarity search: finding the chunks whose meaning is closest to the question (usually in a vector database)"},
+    {"id": "real_use_case", "point": "At least one real-world use case of RAG"},
+    {"id": "limits", "point": "Limits of RAG (for example: bad retrieval gives bad answers, it can still make mistakes, limited context window)"},
+    {"id": "rag_vs_finetuning", "point": "RAG vs fine-tuning: RAG gives the model facts at answer time without changing it; fine-tuning trains and changes the model"}
+  ]
+}

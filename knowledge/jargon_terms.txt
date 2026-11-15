@@ -1,0 +1,20 @@
+# Known technical terms. If the lesson uses any of these, the term must be
+# defined in the "Key words" section. One term per line (case does not matter).
+LLM
+large language model
+embedding
+vector
+vector database
+chunk
+token
+prompt
+retriever
+hallucination
+context window
+fine-tuning
+similarity search
+knowledge base
+semantic search
+cosine similarity
+reranker
+top-k

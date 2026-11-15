@@ -1,0 +1,26 @@
+# Secrets - never commit real API keys
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Run artefacts (keep the folders, not the generated files)
+outputs/*
+!outputs/.gitkeep
+memory/*.tmp
+
+# Personal notes and assignment files - not part of the submission
+LOOM_SCRIPT.md
+CLAUDE.md
+ASSIGNMENT.md
+*.docx
+.claude/
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
