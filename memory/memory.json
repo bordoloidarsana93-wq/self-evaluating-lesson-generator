@@ -45,76 +45,85 @@
       "first_attempt_passed": false,
       "inject_error": true,
       "finished_at": "2026-11-15T11:43:05+00:00"
+    },
+    {
+      "run_id": "20261115-194433-7f13",
+      "topic": "Introduction to RAG (Retrieval-Augmented Generation)",
+      "status": "PASSED",
+      "attempts": 3,
+      "first_attempt_passed": false,
+      "inject_error": true,
+      "finished_at": "2026-11-15T14:19:55+00:00"
     }
   ],
   "check_stats": {
     "sections": {
       "name": "Required sections",
-      "evaluated": 12,
+      "evaluated": 14,
       "failed": 1
     },
     "word_count": {
       "name": "Word count",
-      "evaluated": 12,
+      "evaluated": 14,
       "failed": 0
     },
     "readability": {
       "name": "Readability",
-      "evaluated": 12,
+      "evaluated": 14,
       "failed": 0
     },
     "hard_words": {
       "name": "No hard words",
-      "evaluated": 12,
+      "evaluated": 14,
       "failed": 0
     },
     "jargon_defined": {
       "name": "Jargon defined",
-      "evaluated": 12,
-      "failed": 3
+      "evaluated": 14,
+      "failed": 4
     },
     "quiz": {
       "name": "Quiz with answers",
-      "evaluated": 12,
+      "evaluated": 14,
       "failed": 2
     },
     "accuracy": {
       "name": "Accurate & grounded",
-      "evaluated": 10,
-      "failed": 2
+      "evaluated": 12,
+      "failed": 3
     },
     "coverage": {
       "name": "Covers key points",
-      "evaluated": 11,
+      "evaluated": 13,
       "failed": 1
     },
     "unexplained_jargon": {
       "name": "No unexplained jargon",
-      "evaluated": 11,
+      "evaluated": 13,
       "failed": 5
     },
     "worked_example": {
       "name": "Teaches by a worked example",
-      "evaluated": 9,
+      "evaluated": 11,
       "failed": 0
     },
     "flow": {
       "name": "Coherent flow",
-      "evaluated": 10,
-      "failed": 6
+      "evaluated": 12,
+      "failed": 7
     },
     "simple_english": {
       "name": "Simple English",
-      "evaluated": 9,
+      "evaluated": 11,
       "failed": 3
     }
   },
   "lessons_learned": [
     {
       "rule": "Define every technical term immediately before its first use in the text.",
-      "count": 4,
+      "count": 5,
       "first_seen": "2026-11-15T10:26:28+00:00",
-      "last_seen": "2026-11-15T11:32:07+00:00"
+      "last_seen": "2026-11-15T14:19:55+00:00"
     },
     {
       "rule": "Replace all metaphors, idioms, and figurative language with plain, literal explanations.",
@@ -130,9 +139,9 @@
     },
     {
       "rule": "Verify claims against references to avoid overstating capabilities or contradicting source material.",
-      "count": 1,
+      "count": 2,
       "first_seen": "2026-11-15T10:33:47+00:00",
-      "last_seen": "2026-11-15T10:33:47+00:00"
+      "last_seen": "2026-11-15T14:19:55+00:00"
     },
     {
       "rule": "Ensure quiz sections contain at least three numbered questions, each followed by a labeled answer.",
@@ -142,9 +151,9 @@
     },
     {
       "rule": "List all technical terms used in the lesson body within the Key words section.",
-      "count": 1,
+      "count": 2,
       "first_seen": "2026-11-15T10:39:14+00:00",
-      "last_seen": "2026-11-15T10:39:14+00:00"
+      "last_seen": "2026-11-15T14:19:55+00:00"
     }
   ],
   "human_feedback": {}

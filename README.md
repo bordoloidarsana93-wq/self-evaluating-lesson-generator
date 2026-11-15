@@ -16,6 +16,50 @@ plan -> generate -> evaluate (12 checks) -> pass?  yes -> finalize -> reflect (m
 
 ---
 
+## How this meets the brief
+
+| Brief | How it is done here |
+|---|---|
+| **GENERATE** a standalone beginner lesson | `plan` writes a teaching outline, then `generate` writes the lesson, grounded in a curated [reference sheet](knowledge/rag_reference.md) |
+| **EVALUATE** with hard pass/fail checks | 12 checks, no partial credit: 6 deterministic code checks + 6 LLM-judge checks, with an [evidence rule](#the-evidence-rule-keeping-the-judges-honest) so judges cannot fail a lesson over imagined problems |
+| **REGENERATE** on fail, max 1–2 retries | Targeted revision of only the failed checks; at most 2 retries, then the best attempt ships as **BLOCKED – needs human review**. The loop always ends |
+| **OUTPUT** passing lesson + rejection log | `lesson.md`, `rejection_log.md` (every attempt: what failed, why, evidence, what changed) and `run.json` per run |
+
+### Across the pipeline
+
+**🔁 SELF-EVOLVING: learns from repeated failures to sharpen prompts and rubrics**
+- **Prompts sharpen automatically.** After every run, the `reflect` step turns the run's failures
+  into short, general writing rules (for example, *"Define every technical term immediately
+  before its first use"*). A rule seen again gets its count increased, so **repeated failures
+  rise to the top**, and the top rules are added to the generator's prompt on the next run.
+  Checks that fail often also become explicit warnings in that prompt.
+- **Rubrics sharpen through human feedback.** `feedback --check <id> "note"` adds a reviewer's
+  note to that judge's prompt on every future run, with no code changes.
+- **Why prompts change automatically but rubrics don't:** if a system could rewrite its own
+  grading rules, it could quietly make them easier and pass itself. The writer improves on its
+  own; the judges' standards stay under human control.
+- **Measured:** `memory show` prints the first-attempt pass rate across runs, the number that
+  should rise as rules accumulate.
+
+**🧠 MEMORY: persists across runs; learns from feedback and logs**
+- **Persists:** [`memory/memory.json`](memory/memory.json) stays on disk between runs (tested: a
+  new run reads what the previous one saved). It is written atomically, so a crash cannot corrupt it.
+- **Learns from logs:** every run saves a full log to `outputs/<run_id>/` (`rejection_log.md` for
+  people, `run.json` for machines). `reflect` reads the same attempt history (every check's result,
+  reason, evidence and fix) and turns it into rules and per-check failure statistics.
+- **Learns from feedback:** human notes are stored per check and used by the judges from then on.
+- **Learns only from real signal:** planted demo errors and API outages are excluded, so memory
+  is not taught wrong lessons.
+
+**🧱 STACK: LangGraph + Python + API, any model**
+- **LangGraph** orchestrates the loop (one ~50-line file). Everything else is plain Python.
+  LangChain is deliberately not used.
+- **Any model:** one OpenAI-compatible client works with **Groq, GitHub Models, Gemini and
+  OpenAI**; switching is one line in `.env`, and the writer and judge models are set separately.
+  Default: `openai/gpt-oss-120b` writes and `openai/gpt-oss-20b` judges, on Groq's free tier.
+
+---
+
 ## Quick start (Windows PowerShell)
 
 ```powershell
@@ -164,10 +208,16 @@ Each run writes to `outputs/<run_id>/`:
 - `rejection_log.md`: for every attempt, each check's result, reason, evidence and fix, plus what changed before that attempt
 - `run.json`: everything, machine-readable (plan, all drafts, all check results, models, rules used)
 
+**Usage tracking:** every model call records its step, model, tokens in/out and time. At the end of
+a run the console prints a summary (calls, tokens for the writer and the judge, total time and time
+spent waiting for rate limits), and the same numbers go into `run.json` and the top of
+`rejection_log.md`. This made the free-tier trade-offs measurable: for example, setting the judge's
+`reasoning_effort` to `low` cut a judge call from about 3.6k to about 1.8k tokens.
+
 Sample runs are committed in [`examples/`](examples/):
 - [`examples/passing_run/`](examples/passing_run/): a real run that failed attempt 1, was revised, and passed 12/12 on attempt 2
   (recorded with an earlier model pairing, qwen writer and gpt-oss-120b judge, before the switch described under *Design choices*)
-- [`examples/error_injection_run/`](examples/error_injection_run/): the evaluator catching the planted errors
+- [`examples/error_injection_run/`](examples/error_injection_run/): the evaluator catching both planted errors on attempt 1, a cut-off revision being safely discarded, and the lesson passing 12/12 on attempt 3 (23 model calls, ~67k tokens, ~5.5 minutes, mostly waiting for free-tier rate limits)
 
 ---
 
@@ -191,7 +241,7 @@ lesson_agent/
   cli.py           command-line interface
 knowledge/         reference sheet, topic spec (sections + must-cover), word lists
 memory/            memory.json (persists across runs)
-tests/             28 tests with a fake LLM (no API key needed)
+tests/             30 tests with a fake LLM (no API key needed)
 ```
 
 ---
@@ -270,7 +320,7 @@ English") with a 16-word average sentence cap.
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-28 tests, all offline with a scripted fake LLM:
+30 tests, all offline with a scripted fake LLM:
 - **Pass path:** a good first draft ships after 1 attempt with all 3 output files.
 - **Retry cap:** a judge that always fails stops the loop after exactly 3 attempts and marks it BLOCKED (also with `max_retries=0`, and when a revision itself fails).
 - **Error injection:** the code check catches the undefined term, the accuracy judge catches the false claim, and the reviser fixes both.

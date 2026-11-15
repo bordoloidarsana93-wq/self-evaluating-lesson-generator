@@ -67,6 +67,8 @@ class OpenAICompatibleClient:
         self.model = model
         self.max_attempts = max_attempts
         self.reasoning_effort = reasoning_effort  # Only sent if set (not every model supports it).
+        # One entry per successful API call: step, model, tokens and time. See `summarize_usage`.
+        self.usage_log: list[dict[str, Any]] = []
         # No max_tokens on purpose: Groq's free tier counts it against an 8k tokens-per-minute
         # cap and rejects big values outright. Cut-off replies are caught below instead.
         # max_retries=0: we retry ourselves so every wait is visible in the console.
@@ -90,7 +92,9 @@ class OpenAICompatibleClient:
         if self.reasoning_effort:
             extra["reasoning_effort"] = self.reasoning_effort
 
+        waited = 0.0  # Seconds spent waiting out rate limits for this call.
         for attempt in range(1, self.max_attempts + 1):
+            started = time.perf_counter()
             try:
                 response = self._client.chat.completions.create(
                     model=self.model,
@@ -113,10 +117,22 @@ class OpenAICompatibleClient:
                     type(exc).__name__, label, delay, attempt, self.max_attempts,
                 )
                 time.sleep(delay)
+                waited += delay
                 continue
             except openai.APIError as exc:
                 # Wrong key, unknown model, bad request: waiting will not fix these.
                 raise LLMError(f"[{label}] {exc}") from exc
+
+            # Record usage before any checks: the tokens were spent even if the reply is unusable.
+            usage = response.usage
+            self.usage_log.append({
+                "label": label,
+                "model": self.model,
+                "input_tokens": usage.prompt_tokens if usage else 0,
+                "output_tokens": usage.completion_tokens if usage else 0,
+                "seconds": round(time.perf_counter() - started, 2),
+                "waited_seconds": round(waited, 1),
+            })
 
             choice = response.choices[0]
             text = choice.message.content or ""
@@ -144,6 +160,32 @@ def _retry_delay(exc: Exception, attempt: int) -> float:
         except ValueError:
             pass
     return float(min(2**attempt, 60))
+
+
+def summarize_usage(calls: list[dict[str, Any]]) -> dict[str, Any]:
+    """Total tokens and time for a list of usage entries, overall and per step.
+
+    Steps are grouped by the part of the label before ":", so all six judges add up
+    under "judge".
+    """
+    by_step: dict[str, dict[str, Any]] = {}
+    for call in calls:
+        step = by_step.setdefault(
+            call["label"].split(":")[0], {"calls": 0, "input_tokens": 0, "output_tokens": 0, "seconds": 0.0}
+        )
+        step["calls"] += 1
+        step["input_tokens"] += call["input_tokens"]
+        step["output_tokens"] += call["output_tokens"]
+        step["seconds"] = round(step["seconds"] + call["seconds"], 2)
+    return {
+        "calls": len(calls),
+        "input_tokens": sum(c["input_tokens"] for c in calls),
+        "output_tokens": sum(c["output_tokens"] for c in calls),
+        "total_tokens": sum(c["input_tokens"] + c["output_tokens"] for c in calls),
+        "model_seconds": round(sum(c["seconds"] for c in calls), 1),
+        "rate_limit_wait_seconds": round(sum(c["waited_seconds"] for c in calls), 1),
+        "by_step": by_step,
+    }
 
 
 def parse_json_object(text: str) -> dict[str, Any]:

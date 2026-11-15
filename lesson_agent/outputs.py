@@ -37,6 +37,7 @@ def write_outputs(state: LessonState, settings: Settings) -> Path:
         "plan": state.get("plan", ""),
         "memory_rules_used": state.get("memory_rules_used", []),
         "new_rules": state.get("new_rules", []),
+        "usage": state.get("usage", {}),
         "attempts": state["history"],
         "final_lesson": state["final_lesson"],
     }
@@ -66,6 +67,7 @@ def _rejection_log(state: LessonState, settings: Settings) -> str:
         f"of {len(state['history'])})",
         f"- **Models:** generator `{settings.generator_model}`, judge `{settings.judge_model}` ({settings.provider})",
         f"- **Error injection:** {'on' if state.get('inject_error') else 'off'}",
+        _usage_line(state.get("usage")),
         "",
         "Legend: PASS = check passed. FAIL = check failed. "
         "PASS* = a judge said FAIL but its evidence was not found in the lesson, so it was discarded.",
@@ -76,6 +78,19 @@ def _rejection_log(state: LessonState, settings: Settings) -> str:
         lines += ["", "## Lessons learned this run (saved to memory)", ""]
         lines += [f"- {rule}" for rule in state["new_rules"]]
     return "\n".join(lines) + "\n"
+
+
+def _usage_line(usage: dict | None) -> str:
+    """One line with tokens and time, e.g. "Usage: 34 calls, 61,200 tokens, 292s"."""
+    if not usage:
+        return "- **Usage:** not recorded"
+    writer, judge = usage["writer"], usage["judge"]
+    return (
+        f"- **Usage:** {writer['calls'] + judge['calls']} model calls, "
+        f"{writer['total_tokens'] + judge['total_tokens']:,} tokens "
+        f"(writer {writer['total_tokens']:,}, judge {judge['total_tokens']:,}), "
+        f"{usage['wall_seconds']:.0f}s total"
+    )
 
 
 def _attempt_section(record: AttemptRecord) -> list[str]:

@@ -23,6 +23,18 @@ def test_pass_path_ships_first_draft(settings):
     assert (run_dir / "lesson.md").read_text(encoding="utf-8").startswith("# Introduction to RAG")
 
 
+def test_usage_is_tracked_per_role_and_step(settings):
+    services = make_services(settings)
+    state, run_dir = run_pipeline(services)
+
+    usage = state["usage"]
+    assert usage["judge"]["calls"] == 6
+    assert set(usage["judge"]["by_step"]) == {"judge"}  # All six judges add up under one step.
+    assert set(usage["writer"]["by_step"]) == {"plan", "generate"}
+    assert usage["writer"]["total_tokens"] > 0 and usage["judge"]["total_tokens"] > 0
+    assert "**Usage:**" in (run_dir / "rejection_log.md").read_text(encoding="utf-8")
+
+
 def test_retry_cap_stops_the_loop_and_marks_blocked(settings):
     # The flow judge always fails with a quote that really exists, so nothing can pass.
     stubborn_judge = FakeLLM({"judge:flow": fail_json("RAG works in the same way."), "judge": make_judge().handlers["judge"]})

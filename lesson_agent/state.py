@@ -58,6 +58,7 @@ class LessonState(TypedDict, total=False):
     final_lesson: str
     best_attempt: int
     new_rules: list[str]  # Rules the reflect step learned or reinforced in this run.
+    usage: dict  # Tokens and time per model role, added after the graph finishes.
 
 
 def make_result(

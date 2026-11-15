@@ -1,0 +1,483 @@
+{
+  "run_id": "20261115-194433-7f13",
+  "topic": "Introduction to RAG (Retrieval-Augmented Generation)",
+  "started_at": "2026-11-15T14:14:33+00:00",
+  "status": "PASSED",
+  "best_attempt": 3,
+  "inject_error": true,
+  "settings": {
+    "provider": "groq",
+    "generator_model": "openai/gpt-oss-120b",
+    "judge_model": "openai/gpt-oss-20b",
+    "max_retries": 2
+  },
+  "plan": "**Lesson Plan – Introduction to Retrieval‑Augmented Generation (RAG)**  \n\n| Section | What will be taught (2‑3 bullets) |\n|---------|-----------------------------------|\n| **What is RAG** | • Define RAG as a way to help a language model answer with up‑to‑date facts. <br>• Show the three steps – Retrieve, Augment, Generate. |\n| **Why it matters** | • Explain that pure LLMs may “hallucinate” or be outdated. <br>• Show how RAG keeps answers factual and relevant. |\n| **How it works** | • Introduce *chunking* and why large documents are split. <br>• Explain *embeddings* and *similarity search* in a vector store. <br>• Show how the retrieved chunks are added to the prompt (augmentation). |\n| **Worked example** | • Daily‑life scenario: a student asks “What is the best time to plant mango seedlings in Karnataka?” <br>• Step‑by‑step: retrieve relevant agriculture PDFs, augment the question with the top 2 chunks, generate answer. |\n| **Key words** | • List each term with a one‑sentence definition (Retrieve, Augment, Generate, Chunking, Embeddings, Similarity search, Vector database, Context window, Fine‑tuning). |\n| **Recap** | • Summarise the three RAG steps and the supporting concepts. |\n| **Check your understanding** | • 3‑question quiz: identify each step, pick the right term, spot a limitation. |\n\n**Concrete Worked Example (India‑focused)**  \nA farmer in Karnataka wants advice on mango planting. The system:  \n1. **Retrieve** – searches a local agricultural knowledge base, finds two short passages about “monsoon timing” and “soil preparation”.  \n2. **Augment** – adds those passages to the user’s question, forming a single prompt.  \n3. **Generate** – the LLM writes a concise answer using the provided facts.\n\n**Technical terms – order of first appearance**  \n1. Retrieve 2. Augment 3. Generate 4. Chunking 5. Embeddings 6. Similarity search 7. Vector database 8. Context window 9. Fine‑tuning.",
+  "memory_rules_used": [
+    "Define every technical term immediately before its first use in the text.",
+    "Ensure new concepts are introduced and defined before being referenced in summaries.",
+    "Ensure quiz sections contain at least three numbered questions, each followed by a labeled answer.",
+    "Replace all metaphors, idioms, and figurative language with plain, literal explanations.",
+    "List all technical terms used in the lesson body within the Key words section."
+  ],
+  "new_rules": [
+    "Define every technical term immediately before its first use in the text.",
+    "Verify claims against references to avoid overstating capabilities or contradicting source material.",
+    "List all technical terms used in the lesson body within the Key words section."
+  ],
+  "usage": {
+    "wall_seconds": 321.9,
+    "writer": {
+      "calls": 5,
+      "input_tokens": 11107,
+      "output_tokens": 9230,
+      "total_tokens": 20337,
+      "model_seconds": 22.8,
+      "rate_limit_wait_seconds": 0.0,
+      "by_step": {
+        "plan": {
+          "calls": 1,
+          "input_tokens": 470,
+          "output_tokens": 548,
+          "seconds": 1.83
+        },
+        "generate": {
+          "calls": 1,
+          "input_tokens": 2713,
+          "output_tokens": 2310,
+          "seconds": 5.17
+        },
+        "revise": {
+          "calls": 2,
+          "input_tokens": 7432,
+          "output_tokens": 5762,
+          "seconds": 13.91
+        },
+        "reflect": {
+          "calls": 1,
+          "input_tokens": 492,
+          "output_tokens": 610,
+          "seconds": 1.91
+        }
+      }
+    },
+    "judge": {
+      "calls": 18,
+      "input_tokens": 41162,
+      "output_tokens": 5172,
+      "total_tokens": 46334,
+      "model_seconds": 16.0,
+      "rate_limit_wait_seconds": 273.0,
+      "by_step": {
+        "judge": {
+          "calls": 18,
+          "input_tokens": 41162,
+          "output_tokens": 5172,
+          "seconds": 15.99
+        }
+      }
+    }
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "lesson": "# Introduction to Retrieval‑Augmented Generation (RAG)\n\n## What is RAG\nRetrieval‑Augmented Generation (RAG) is a method that helps a **large language model (LLM)** give more accurate answers.  \nAn LLM is a computer program that can read a prompt and write natural‑language text.  \n\nRAG works in three clear steps:\n\n1. **Retrieve** – find the most relevant pieces of text from a collection of documents.  \n2. **Augment** – add those pieces to the prompt together with the user’s question.  \n3. **Generate** – the LLM reads the augmented prompt and writes the answer.\n\n## Why it matters\nAn LLM only knows what was in its training data, up to a fixed date.  \nIt cannot see new news, recent research, or private company policies.  \n\nLLMs can also **hallucinate**, meaning they may produce text that sounds true but is actually false.  \n\nRAG reduces hallucination by grounding the answer in real documents.  \nIt also lets the system show the source of each fact, so users can verify the answer.  \n\nA real‑world use case: a customer‑support bot for an e‑commerce site.  \nThe bot reads the company’s help articles and answers customers with up‑to‑date policies.  \n\n## How it works\n\nRAG retrains the model on your documents, so the new facts are stored inside the model itself. After that, a reranker sorts the results.\nRAG has two phases: indexing (done once) and query time (done for each question).\n\n### Indexing phase\n1. **Collect documents** – gather PDFs, web pages, or notes. This set is called a **knowledge base**.  \n2. **Chunking** – split each document into small pieces called **chunks**. A chunk may be a paragraph or a few hundred words.  \n3. **Embedding** – an **embedding model** converts each chunk into an **embedding**, a list of numbers that captures the chunk’s meaning. This list is also called a **vector**.  \n4. **Vector database** – store each vector together with its original chunk in a **vector database** (also known as a vector index). The database can quickly find vectors that are close to a query vector.\n\n### Query time phase\n1. The user writes a question. The same embedding model turns the question into a query vector.  \n2. **Retriever** runs a **similarity search** in the vector database. It measures closeness with **cosine similarity** and returns the top‑k most similar chunks (usually 3‑5). **Top‑k** means the number of chunks we keep.  \n3. **Augment** – the retrieved chunks are placed into a **prompt**. The prompt also contains the original question and an instruction such as “Answer only using the text below.”  \n4. **Generate** – the LLM reads the prompt (which may be up to a limited size called the **context window**) and writes the final answer.\n\nA **token** is a small piece of text that the LLM counts. The context window limits how many tokens the LLM can read at once.\n\n## Worked example\nA student in Karnataka asks: “What is the best time to plant mango seedlings in Karnataka?”  \n\n**Step 1 – Retrieve**  \nThe system searches a local agricultural knowledge base.  \nIt finds two chunks:  \n\n*Chunk A*: “Mango seedlings should be planted at the beginning of the monsoon, usually June‑July.”  \n*Chunk B*: “Soil must be well‑drained and enriched with organic compost before planting.”  \n\n**Step 2 – Augment**  \nThe system creates a prompt that contains the user’s question, Chunk A, Chunk B, and the instruction “Answer using only the information below.”  \n\n**Step 3 – Generate**  \nThe LLM reads the prompt and writes:  \n\n“The best time to plant mango seedlings in Karnataka is at the start of the monsoon, around June‑July. Prepare the soil with good drainage and add organic compost before planting.”  \n\nThe answer is based on the retrieved facts, not on the LLM’s internal memory.\n\n## Limits, and RAG compared with fine‑tuning\nRAG has several limits.  \n\n*If retrieval quality is low, the answer will be low.* Wrong or irrelevant chunks lead to wrong answers.  \n\n*Source quality matters.* Old or inaccurate documents produce inaccurate facts.  \n\n*Chunk size matters.* Very small chunks lose context; very large chunks add noise and may exceed the context window.  \n\n*Context window* restricts how many tokens can be read at once. If we retrieve many chunks, some may be cut off.  \n\nThe LLM can still **hallucinate** or misinterpret the retrieved text.  \n\nRAG also adds cost and latency because each query needs an embedding, a search, and an LLM call.  \n\n**RAG vs fine‑tuning**  \nFine‑tuning means training the LLM further on new examples. This changes the model’s internal weights.  \n\nRAG does not change the model. It only gives the model extra text at answer time.  \n\nFine‑tuning is useful for teaching a specific style or task.  \nRAG is better for providing up‑to‑date facts or private information.  \n\nUpdating knowledge with RAG only requires changing the documents in the knowledge base.  \nUpdating knowledge with fine‑tuning requires another training run, which is slower and more expensive.  \n\nBoth methods can be combined, but they serve different purposes.\n\n## Key words\n- **LLM**: a large language model that writes text from a prompt.  \n- **Retrieve**: find the most relevant pieces of text from a collection of documents.  \n- **Augment**: add the retrieved text to the prompt together with the question.  \n- **Generate**: the LLM writes the answer using the retrieved text.  \n- **Chunk**: a small piece of a document, such as a paragraph, used for searching.  \n- **Chunking**: the process of splitting documents into chunks.  \n- **Embedding**: turning text into a list of numbers that capture its meaning.  \n- **Vector**: the list of numbers produced by an embedding; it represents meaning.  \n- **Vector database**: a storage system that holds vectors and can quickly find similar ones.  \n- **Knowledge base**: the collection of documents that RAG searches.  \n- **Retriever**: the part of the system that runs the similarity search.  \n- **Similarity search**: finding vectors whose meaning is close to the query vector.  \n- **Cosine similarity**: a mathematical measure that tells how close two vectors are.  \n- **Top‑k**: the number of chunks kept after similarity search.  \n- **Prompt**: the text given to the LLM, including question, retrieved chunks, and instructions.  \n- **Token**: a small unit of text counted by the LLM.  \n- **Context window**: the maximum number of tokens the LLM can read at once.  \n- **Hallucination**: when the LLM produces text that is false or made up.  \n- **Fine‑tuning**: further training of the LLM that changes its internal weights.  \n\n## Recap\nRAG follows three steps: Retrieve, Augment, Generate.  \nRetrieve finds relevant chunks from a knowledge base.  \nAugment adds those chunks to the prompt.  \nGenerate lets the LLM write the answer.  \n\nSupporting ideas include chunking, embeddings, vector databases, similarity search, top‑k, context window, and fine‑tuning comparison.\n\n## Check your understanding\n1. Which step comes first: retrieving documents or generating the answer?  \n   **Answer:** Retrieve comes first.  \n\n2. What is the purpose of a vector database?  \n   **Answer:** It stores vectors so the system can quickly find similar ones.  \n\n3. Name one limitation of RAG that can still cause wrong answers.  \n   **Answer:** Poor retrieval quality can return irrelevant chunks, leading to wrong answers.  \n\n4. How does RAG differ from fine‑tuning in terms of model changes?  \n   **Answer:** RAG does not change the model’s weights; fine‑tuning updates the model itself.",
+      "changes": [
+        "First draft.",
+        "INJECTED (demo) false claim: \"RAG retrains the model on your documents, so the new facts are stored inside the model itself.\"",
+        "INJECTED (demo) undefined jargon: \"After that, a reranker sorts the results.\""
+      ],
+      "checks": [
+        {
+          "id": "sections",
+          "name": "Required sections",
+          "kind": "code",
+          "passed": true,
+          "reason": "All required sections are present.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "word_count",
+          "name": "Word count",
+          "kind": "code",
+          "passed": true,
+          "reason": "1120 words (allowed 700-1800).",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "readability",
+          "name": "Readability",
+          "kind": "code",
+          "passed": true,
+          "reason": "Flesch 63.4, average sentence 11.2 words.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "hard_words",
+          "name": "No hard words",
+          "kind": "code",
+          "passed": true,
+          "reason": "No blocklisted words found.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "jargon_defined",
+          "name": "Jargon defined",
+          "kind": "code",
+          "passed": false,
+          "reason": "1 technical term(s) are used but not defined in 'Key words'.",
+          "evidence": "'reranker' used in ...inside the model itself. After that, a reranker sorts the results. RAG has two phases:...",
+          "fix": "Add a simple definition to 'Key words' for: reranker (or remove the term if it is not needed).",
+          "overruled": false
+        },
+        {
+          "id": "quiz",
+          "name": "Quiz with answers",
+          "kind": "code",
+          "passed": true,
+          "reason": "3 question(s), 4 answer(s).",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "accuracy",
+          "name": "Accurate & grounded",
+          "kind": "judge",
+          "passed": false,
+          "reason": "Lesson contains statements that RAG retrains or changes the model, contradicting the reference sheet.",
+          "evidence": "\"RAG retrains the model on your documents, so the new facts are stored inside the model itself. After that, a reranker sorts the results.\" | \"RAG retrains the model on your documents, so the new facts are stored inside the model itself. After that, a reranker sorts the results.\"",
+          "fix": "Remove or correct any statements implying that RAG retrains, fine‑tunes, or otherwise changes the LLM’s weights. Clarify that RAG only retrieves, augments, and generates without modifying the model.",
+          "overruled": false
+        },
+        {
+          "id": "coverage",
+          "name": "Covers key points",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All 9 must-cover points are explained, each proven by a verified quote.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "unexplained_jargon",
+          "name": "No unexplained jargon",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All technical terms are either in the ignore list or explained.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "worked_example",
+          "name": "Teaches by a worked example",
+          "kind": "judge",
+          "passed": true,
+          "reason": "Includes a concrete, relatable worked example with step-by-step Retrieve, Augment, Generate.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "flow",
+          "name": "Coherent flow",
+          "kind": "judge",
+          "passed": false,
+          "reason": "Terms such as Retriever, similarity search, cosine similarity, top‑k, and context window are used before they are defined.",
+          "evidence": "\"Retriever runs a similarity search in the vector database.\" | \"It measures closeness with cosine similarity and returns the top‑k most similar chunks.\" | \"The LLM reads the prompt (which may be up to a limited size called the context window)\"",
+          "fix": "Move the definitions of Retriever, similarity search, cosine similarity, top‑k, and context window to the beginning of the lesson (e.g., in the introductory section or immediately after the first mention).",
+          "overruled": false
+        },
+        {
+          "id": "simple_english",
+          "name": "Simple English",
+          "kind": "judge",
+          "passed": true,
+          "reason": "No idioms, slang, or figures of speech detected.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        }
+      ],
+      "passed": false,
+      "passed_count": 9,
+      "total": 12
+    },
+    {
+      "attempt": 2,
+      "lesson": "# Introduction to Retrieval‑Augmented Generation (RAG)\n\n## What is RAG\nRetrieval‑Augmented Generation (RAG) is a method that helps a **large language model (LLM)** give more accurate answers.  \nAn LLM is a computer program that can read a prompt and write natural‑language text.  \n\nRAG works in three clear steps:\n\n1. **Retrieve** – find the most relevant pieces of text from a collection of documents.  \n2. **Augment** – add those pieces to the prompt together with the user’s question.  \n3. **Generate** – the LLM reads the augmented prompt and writes the answer.\n\n## Why it matters\nAn LLM only knows what was in its training data, up to a fixed date.  \nIt cannot see new news, recent research, or private company policies.  \n\nLLMs can also **hallucinate**, meaning they may produce text that sounds true but is actually false.  \n\nRAG reduces hallucination by grounding the answer in real documents.  \nIt also lets the system show the source of each fact, so users can verify the answer.  \n\nA real‑world use case: a customer‑support bot for an e‑commerce site.  \nThe bot reads the company’s help articles and answers customers with up‑to‑date policies.  \n\n## How it works\n\nRAG retrains the model on your documents, so the new facts are stored inside the model itself. After that, a reranker sorts the results.\nRAG has two phases: indexing (done once) and query time (done for each question).\n\n### Indexing phase\n1. **Collect documents** – gather PDFs, web pages, or notes. This set is called a **knowledge base**.  \n2. **Chunking** – split each document into small pieces called **chunks**. A chunk may be a paragraph or a few hundred words.  \n3. **Embedding** – an **embedding model** converts each chunk into an **embedding**, a list of numbers that captures the chunk’s meaning. This list is also called a **vector**.  \n4. **Vector database** – store each vector together with its original chunk in a **vector database** (also known as a vector index). The database can quickly find vectors that are close to a query vector.\n\n### Query time phase\n1. The user writes a question. The same embedding model turns the question into a query vector.  \n2. **Retriever** runs a **similarity search** in the vector database. It measures closeness with **cosine similarity** and returns the top‑k most similar chunks (usually 3‑5). **Top‑k** means the number of chunks we keep.  \n3. **Augment** – the retrieved chunks are placed into a **prompt**. The prompt also contains the original question and an instruction such as “Answer only using the text below.”  \n4. **Generate** – the LLM reads the prompt (which may be up to a limited size called the **context window**) and writes the final answer.\n\nA **token** is a small piece of text that the LLM counts. The context window limits how many tokens the LLM can read at once.\n\n## Worked example\nA student in Karnataka asks: “What is the best time to plant mango seedlings in Karnataka?”  \n\n**Step 1 – Retrieve**  \nThe system searches a local agricultural knowledge base.  \nIt finds two chunks:  \n\n*Chunk A*: “Mango seedlings should be planted at the beginning of the monsoon, usually June‑July.”  \n*Chunk B*: “Soil must be well‑drained and enriched with organic compost before planting.”  \n\n**Step 2 – Augment**  \nThe system creates a prompt that contains the user’s question, Chunk A, Chunk B, and the instruction “Answer using only the information below.”  \n\n**Step 3 – Generate**  \nThe LLM reads the prompt and writes:  \n\n“The best time to plant mango seedlings in Karnataka is at the start of the monsoon, around June‑July. Prepare the soil with good drainage and add organic compost before planting.”  \n\nThe answer is based on the retrieved facts, not on the LLM’s internal memory.\n\n## Limits, and RAG compared with fine‑tuning\nRAG has several limits.  \n\n*If retrieval quality is low, the answer will be low.* Wrong or irrelevant chunks lead to wrong answers.  \n\n*Source quality matters.* Old or inaccurate documents produce inaccurate facts.  \n\n*Chunk size matters.* Very small chunks lose context; very large chunks add noise and may exceed the context window.  \n\n*Context window* restricts how many tokens can be read at once. If we retrieve many chunks, some may be cut off.  \n\nThe LLM can still **hallucinate** or misinterpret the retrieved text.  \n\nRAG also adds cost and latency because each query needs an embedding, a search, and an LLM call.  \n\n**RAG vs fine‑tuning**  \nFine‑tuning means training the LLM further on new examples. This changes the model’s internal weights.  \n\nRAG does not change the model. It only gives the model extra text at answer time.  \n\nFine‑tuning is useful for teaching a specific style or task.  \nRAG is better for providing up‑to‑date facts or private information.  \n\nUpdating knowledge with RAG only requires changing the documents in the knowledge base.  \nUpdating knowledge with fine‑tuning requires another training run, which is slower and more expensive.  \n\nBoth methods can be combined, but they serve different purposes.\n\n## Key words\n- **LLM**: a large language model that writes text from a prompt.  \n- **Retrieve**: find the most relevant pieces of text from a collection of documents.  \n- **Augment**: add the retrieved text to the prompt together with the question.  \n- **Generate**: the LLM writes the answer using the retrieved text.  \n- **Chunk**: a small piece of a document, such as a paragraph, used for searching.  \n- **Chunking**: the process of splitting documents into chunks.  \n- **Embedding**: turning text into a list of numbers that capture its meaning.  \n- **Vector**: the list of numbers produced by an embedding; it represents meaning.  \n- **Vector database**: a storage system that holds vectors and can quickly find similar ones.  \n- **Knowledge base**: the collection of documents that RAG searches.  \n- **Retriever**: the part of the system that runs the similarity search.  \n- **Similarity search**: finding vectors whose meaning is close to the query vector.  \n- **Cosine similarity**: a mathematical measure that tells how close two vectors are.  \n- **Top‑k**: the number of chunks kept after similarity search.  \n- **Prompt**: the text given to the LLM, including question, retrieved chunks, and instructions.  \n- **Token**: a small unit of text counted by the LLM.  \n- **Context window**: the maximum number of tokens the LLM can read at once.  \n- **Hallucination**: when the LLM produces text that is false or made up.  \n- **Fine‑tuning**: further training of the LLM that changes its internal weights.  \n\n## Recap\nRAG follows three steps: Retrieve, Augment, Generate.  \nRetrieve finds relevant chunks from a knowledge base.  \nAugment adds those chunks to the prompt.  \nGenerate lets the LLM write the answer.  \n\nSupporting ideas include chunking, embeddings, vector databases, similarity search, top‑k, context window, and fine‑tuning comparison.\n\n## Check your understanding\n1. Which step comes first: retrieving documents or generating the answer?  \n   **Answer:** Retrieve comes first.  \n\n2. What is the purpose of a vector database?  \n   **Answer:** It stores vectors so the system can quickly find similar ones.  \n\n3. Name one limitation of RAG that can still cause wrong answers.  \n   **Answer:** Poor retrieval quality can return irrelevant chunks, leading to wrong answers.  \n\n4. How does RAG differ from fine‑tuning in terms of model changes?  \n   **Answer:** RAG does not change the model’s weights; fine‑tuning updates the model itself.",
+      "changes": [
+        "Revision failed, previous draft kept: [revise] the reply was cut off at the output token limit"
+      ],
+      "checks": [
+        {
+          "id": "sections",
+          "name": "Required sections",
+          "kind": "code",
+          "passed": true,
+          "reason": "All required sections are present.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "word_count",
+          "name": "Word count",
+          "kind": "code",
+          "passed": true,
+          "reason": "1120 words (allowed 700-1800).",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "readability",
+          "name": "Readability",
+          "kind": "code",
+          "passed": true,
+          "reason": "Flesch 63.4, average sentence 11.2 words.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "hard_words",
+          "name": "No hard words",
+          "kind": "code",
+          "passed": true,
+          "reason": "No blocklisted words found.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "jargon_defined",
+          "name": "Jargon defined",
+          "kind": "code",
+          "passed": false,
+          "reason": "1 technical term(s) are used but not defined in 'Key words'.",
+          "evidence": "'reranker' used in ...inside the model itself. After that, a reranker sorts the results. RAG has two phases:...",
+          "fix": "Add a simple definition to 'Key words' for: reranker (or remove the term if it is not needed).",
+          "overruled": false
+        },
+        {
+          "id": "quiz",
+          "name": "Quiz with answers",
+          "kind": "code",
+          "passed": true,
+          "reason": "3 question(s), 4 answer(s).",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "accuracy",
+          "name": "Accurate & grounded",
+          "kind": "judge",
+          "passed": false,
+          "reason": "Contains a factual contradiction about RAG retraining the model.",
+          "evidence": "\"RAG retrains the model on your documents, so the new facts are stored inside the model itself. After that, a reranker sorts the results.\"",
+          "fix": "Replace the sentence with a correct statement: \"RAG does not retrain or fine‑tune the model; it only retrieves documents and augments the prompt at answer time.\"",
+          "overruled": false
+        },
+        {
+          "id": "coverage",
+          "name": "Covers key points",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All 9 must-cover points are explained, each proven by a verified quote.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "unexplained_jargon",
+          "name": "No unexplained jargon",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All technical terms are either defined or are part of the allowed list.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "worked_example",
+          "name": "Teaches by a worked example",
+          "kind": "judge",
+          "passed": true,
+          "reason": "Includes a concrete, relatable worked example with step‑by‑step explanation",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "flow",
+          "name": "Coherent flow",
+          "kind": "judge",
+          "passed": false,
+          "reason": "Terms such as Retriever, similarity search, cosine similarity, top‑k, and context window are used before they are defined.",
+          "evidence": "\"Retriever runs a similarity search in the vector database.\" | \"It measures closeness with cosine similarity and returns the top‑k most similar chunks.\" | \"The LLM reads the prompt (which may be up to a limited size called the context window)\"",
+          "fix": "Move the definitions of Retriever, similarity search, cosine similarity, top‑k, and context window to the beginning of the lesson (e.g., in the introductory section or immediately after the first mention).",
+          "overruled": false
+        },
+        {
+          "id": "simple_english",
+          "name": "Simple English",
+          "kind": "judge",
+          "passed": true,
+          "reason": "No idioms, slang, or figures of speech detected.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        }
+      ],
+      "passed": false,
+      "passed_count": 9,
+      "total": 12
+    },
+    {
+      "attempt": 3,
+      "lesson": "# Introduction to Retrieval‑Augmented Generation (RAG)\n\n## What is RAG\nRetrieval‑Augmented Generation (RAG) is a method that helps a **large language model (LLM)** give more accurate answers.  \nAn LLM is a computer program that can read a prompt and write natural‑language text.  \n\nRAG works in three clear steps:\n\n1. **Retrieve** – find the most relevant pieces of text from a collection of documents.  \n2. **Augment** – add those pieces to the prompt together with the user’s question.  \n3. **Generate** – the LLM reads the augmented prompt and writes the answer.\n\n## Why it matters\nAn LLM only knows what was in its training data, up to a fixed date.  \nIt cannot see new news, recent research, or private company policies.  \n\nLLMs can also **hallucinate**, meaning they may produce text that sounds true but is actually false.  \n\nRAG reduces hallucination by grounding the answer in real documents.  \nIt also lets the system show the source of each fact, so users can verify the answer.  \n\nA real‑world use case: a customer‑support bot for an e‑commerce site.  \nThe bot reads the company’s help articles and answers customers with up‑to‑date policies.  \n\n## How it works\nBefore we describe the two phases, we explain some important words.\n\nA **retriever** is the part that looks for relevant chunks.  \nIt performs a **similarity search**, which means it compares vectors to find those that are close.  \nCloseness is measured with **cosine similarity**.  \nThe system keeps the best few results, called **top‑k**.  \nThe LLM can only read a limited amount of text at once; this limit is the **context window**.\n\nRAG has two phases: indexing (done once) and query time (done for each question).\n\n### Indexing phase\n1. **Collect documents** – gather PDFs, web pages, or notes. This set is called a **knowledge base**.  \n2. **Chunking** – split each document into small pieces called **chunks**. A chunk may be a paragraph or a few hundred words.  \n3. **Embedding** – an **embedding model** converts each chunk into an **embedding**, a list of numbers that captures the chunk’s meaning. This list is also called a **vector**.  \n4. **Vector database** – store each vector together with its original chunk in a **vector database** (also known as a vector index). The database can quickly find vectors that are close to a query vector.\n\n### Query time phase\n1. The user writes a question. The same embedding model turns the question into a query vector.  \n2. **Retriever** runs a **similarity search** in the vector database. It measures closeness with **cosine similarity** and returns the **top‑k** most similar chunks (usually 3‑5).  \n3. **Augment** – the retrieved chunks are placed into a **prompt**. The prompt also contains the original question and an instruction such as “Answer only using the text below.”  \n4. **Generate** – the LLM reads the prompt (which may be up to a limited size called the **context window**) and writes the final answer.\n\nA **token** is a small piece of text that the LLM counts. The context window limits how many tokens the LLM can read at once.\n\n## Worked example\nA student in Karnataka asks: “What is the best time to plant mango seedlings in Karnataka?”  \n\n**Step 1 – Retrieve**  \nThe system searches a local agricultural knowledge base.  \nIt finds two chunks:  \n\n*Chunk A*: “Mango seedlings should be planted at the beginning of the monsoon, usually June‑July.”  \n*Chunk B*: “Soil must be well‑drained and enriched with organic compost before planting.”  \n\n**Step 2 – Augment**  \nThe system creates a prompt that contains the user’s question, Chunk A, Chunk B, and the instruction “Answer using only the information below.”  \n\n**Step 3 – Generate**  \nThe LLM reads the prompt and writes:  \n\n“The best time to plant mango seedlings in Karnataka is at the start of the monsoon, around June‑July. Prepare the soil with good drainage and add organic compost before planting.”  \n\nThe answer is based on the retrieved facts, not on the LLM’s internal memory.\n\n## Limits, and RAG compared with fine‑tuning\nRAG has several limits.  \n\n*If retrieval quality is low, the answer will be low.* Wrong or irrelevant chunks lead to wrong answers.  \n\n*Source quality matters.* Old or inaccurate documents produce inaccurate facts.  \n\n*Chunk size matters.* Very small chunks lose context; very large chunks add noise and may exceed the context window.  \n\n*Context window* restricts how many tokens can be read at once. If we retrieve many chunks, some may be cut off.  \n\nThe LLM can still **hallucinate** or misinterpret the retrieved text.  \n\nRAG also adds cost and latency because each query needs an embedding, a search, and an LLM call.  \n\n**RAG vs fine‑tuning**  \nFine‑tuning means training the LLM further on new examples. This changes the model’s internal weights.  \n\nRAG does not retrain or fine‑tune the model. It only retrieves documents and adds them to the prompt at answer time.  \n\nFine‑tuning is useful for teaching a specific style or task.  \nRAG is better for providing up‑to‑date facts or private information.  \n\nUpdating knowledge with RAG only requires changing the documents in the knowledge base.  \nUpdating knowledge with fine‑tuning requires another training run, which is slower and more expensive.  \n\nBoth methods can be combined, but they serve different purposes.\n\n## Key words\n- **LLM**: a large language model that writes text from a prompt.  \n- **Retrieve**: find the most relevant pieces of text from a collection of documents.  \n- **Augment**: add the retrieved text to the prompt together with the question.  \n- **Generate**: the LLM writes the answer using the retrieved text.  \n- **Chunk**: a small piece of a document, such as a paragraph, used for searching.  \n- **Chunking**: the process of splitting documents into chunks.  \n- **Embedding**: turning text into a list of numbers that capture its meaning.  \n- **Vector**: the list of numbers produced by an embedding; it represents meaning.  \n- **Vector database**: a storage system that holds vectors and can quickly find similar ones.  \n- **Knowledge base**: the collection of documents that RAG searches.  \n- **Retriever**: the part of the system that runs the similarity search.  \n- **Similarity search**: finding vectors whose meaning is close to the query vector.  \n- **Cosine similarity**: a mathematical measure that tells how close two vectors are.  \n- **Top‑k**: the number of chunks kept after similarity search.  \n- **Prompt**: the text given to the LLM, including question, retrieved chunks, and instructions.  \n- **Token**: a small unit of text counted by the LLM.  \n- **Context window**: the maximum number of tokens the LLM can read at once.  \n- **Hallucination**: when the LLM produces text that is false or made up.  \n- **Fine‑tuning**: further training of the LLM that changes its internal weights.  \n\n## Recap\nRAG follows three steps: Retrieve, Augment, Generate.  \nRetrieve finds relevant chunks from a knowledge base.  \nAugment adds those chunks to the prompt.  \nGenerate lets the LLM write the answer.  \n\nSupporting ideas include chunking, embeddings, vector databases, similarity search, top‑k, context window, and fine‑tuning comparison.\n\n## Check your understanding\n1. Which step comes first: retrieving documents or generating the answer?  \n   **Answer:** Retrieve comes first.  \n\n2. What is the purpose of a vector database?  \n   **Answer:** It stores vectors so the system can quickly find similar ones.  \n\n3. Name one limitation of RAG that can still cause wrong answers.  \n   **Answer:** Poor retrieval quality can return irrelevant chunks, leading to wrong answers.  \n\n4. How does RAG differ from fine‑tuning in terms of model changes?  \n   **Answer:** RAG does not change the model’s weights; fine‑tuning updates the model itself.",
+      "changes": [
+        "Added early definitions for retriever, similarity search, cosine similarity, top‑k, and context window before first use.",
+        "Replaced incorrect sentence about retraining with correct statement that RAG does not retrain or fine‑tune the model.",
+        "Removed the term “reranker” and its reference, eliminating the undefined jargon."
+      ],
+      "checks": [
+        {
+          "id": "sections",
+          "name": "Required sections",
+          "kind": "code",
+          "passed": true,
+          "reason": "All required sections are present.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "word_count",
+          "name": "Word count",
+          "kind": "code",
+          "passed": true,
+          "reason": "1164 words (allowed 700-1800).",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "readability",
+          "name": "Readability",
+          "kind": "code",
+          "passed": true,
+          "reason": "Flesch 63.2, average sentence 11.3 words.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "hard_words",
+          "name": "No hard words",
+          "kind": "code",
+          "passed": true,
+          "reason": "No blocklisted words found.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "jargon_defined",
+          "name": "Jargon defined",
+          "kind": "code",
+          "passed": true,
+          "reason": "Every technical term used is in Key words.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "quiz",
+          "name": "Quiz with answers",
+          "kind": "code",
+          "passed": true,
+          "reason": "3 question(s), 4 answer(s).",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "accuracy",
+          "name": "Accurate & grounded",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All factual claims align with the reference sheet.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "coverage",
+          "name": "Covers key points",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All 9 must-cover points are explained, each proven by a verified quote.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "unexplained_jargon",
+          "name": "No unexplained jargon",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All technical terms are defined before use.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "worked_example",
+          "name": "Teaches by a worked example",
+          "kind": "judge",
+          "passed": true,
+          "reason": "Includes a concrete, relatable worked example with step‑by‑step details",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "flow",
+          "name": "Coherent flow",
+          "kind": "judge",
+          "passed": true,
+          "reason": "All terms are defined before first use",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        },
+        {
+          "id": "simple_english",
+          "name": "Simple English",
+          "kind": "judge",
+          "passed": true,
+          "reason": "No idioms, slang, or overly complex sentences detected.",
+          "evidence": "",
+          "fix": "",
+          "overruled": false
+        }
+      ],
+      "passed": true,
+      "passed_count": 12,
+      "total": 12
+    }
+  ],
+  "final_lesson": "# Introduction to Retrieval‑Augmented Generation (RAG)\n\n## What is RAG\nRetrieval‑Augmented Generation (RAG) is a method that helps a **large language model (LLM)** give more accurate answers.  \nAn LLM is a computer program that can read a prompt and write natural‑language text.  \n\nRAG works in three clear steps:\n\n1. **Retrieve** – find the most relevant pieces of text from a collection of documents.  \n2. **Augment** – add those pieces to the prompt together with the user’s question.  \n3. **Generate** – the LLM reads the augmented prompt and writes the answer.\n\n## Why it matters\nAn LLM only knows what was in its training data, up to a fixed date.  \nIt cannot see new news, recent research, or private company policies.  \n\nLLMs can also **hallucinate**, meaning they may produce text that sounds true but is actually false.  \n\nRAG reduces hallucination by grounding the answer in real documents.  \nIt also lets the system show the source of each fact, so users can verify the answer.  \n\nA real‑world use case: a customer‑support bot for an e‑commerce site.  \nThe bot reads the company’s help articles and answers customers with up‑to‑date policies.  \n\n## How it works\nBefore we describe the two phases, we explain some important words.\n\nA **retriever** is the part that looks for relevant chunks.  \nIt performs a **similarity search**, which means it compares vectors to find those that are close.  \nCloseness is measured with **cosine similarity**.  \nThe system keeps the best few results, called **top‑k**.  \nThe LLM can only read a limited amount of text at once; this limit is the **context window**.\n\nRAG has two phases: indexing (done once) and query time (done for each question).\n\n### Indexing phase\n1. **Collect documents** – gather PDFs, web pages, or notes. This set is called a **knowledge base**.  \n2. **Chunking** – split each document into small pieces called **chunks**. A chunk may be a paragraph or a few hundred words.  \n3. **Embedding** – an **embedding model** converts each chunk into an **embedding**, a list of numbers that captures the chunk’s meaning. This list is also called a **vector**.  \n4. **Vector database** – store each vector together with its original chunk in a **vector database** (also known as a vector index). The database can quickly find vectors that are close to a query vector.\n\n### Query time phase\n1. The user writes a question. The same embedding model turns the question into a query vector.  \n2. **Retriever** runs a **similarity search** in the vector database. It measures closeness with **cosine similarity** and returns the **top‑k** most similar chunks (usually 3‑5).  \n3. **Augment** – the retrieved chunks are placed into a **prompt**. The prompt also contains the original question and an instruction such as “Answer only using the text below.”  \n4. **Generate** – the LLM reads the prompt (which may be up to a limited size called the **context window**) and writes the final answer.\n\nA **token** is a small piece of text that the LLM counts. The context window limits how many tokens the LLM can read at once.\n\n## Worked example\nA student in Karnataka asks: “What is the best time to plant mango seedlings in Karnataka?”  \n\n**Step 1 – Retrieve**  \nThe system searches a local agricultural knowledge base.  \nIt finds two chunks:  \n\n*Chunk A*: “Mango seedlings should be planted at the beginning of the monsoon, usually June‑July.”  \n*Chunk B*: “Soil must be well‑drained and enriched with organic compost before planting.”  \n\n**Step 2 – Augment**  \nThe system creates a prompt that contains the user’s question, Chunk A, Chunk B, and the instruction “Answer using only the information below.”  \n\n**Step 3 – Generate**  \nThe LLM reads the prompt and writes:  \n\n“The best time to plant mango seedlings in Karnataka is at the start of the monsoon, around June‑July. Prepare the soil with good drainage and add organic compost before planting.”  \n\nThe answer is based on the retrieved facts, not on the LLM’s internal memory.\n\n## Limits, and RAG compared with fine‑tuning\nRAG has several limits.  \n\n*If retrieval quality is low, the answer will be low.* Wrong or irrelevant chunks lead to wrong answers.  \n\n*Source quality matters.* Old or inaccurate documents produce inaccurate facts.  \n\n*Chunk size matters.* Very small chunks lose context; very large chunks add noise and may exceed the context window.  \n\n*Context window* restricts how many tokens can be read at once. If we retrieve many chunks, some may be cut off.  \n\nThe LLM can still **hallucinate** or misinterpret the retrieved text.  \n\nRAG also adds cost and latency because each query needs an embedding, a search, and an LLM call.  \n\n**RAG vs fine‑tuning**  \nFine‑tuning means training the LLM further on new examples. This changes the model’s internal weights.  \n\nRAG does not retrain or fine‑tune the model. It only retrieves documents and adds them to the prompt at answer time.  \n\nFine‑tuning is useful for teaching a specific style or task.  \nRAG is better for providing up‑to‑date facts or private information.  \n\nUpdating knowledge with RAG only requires changing the documents in the knowledge base.  \nUpdating knowledge with fine‑tuning requires another training run, which is slower and more expensive.  \n\nBoth methods can be combined, but they serve different purposes.\n\n## Key words\n- **LLM**: a large language model that writes text from a prompt.  \n- **Retrieve**: find the most relevant pieces of text from a collection of documents.  \n- **Augment**: add the retrieved text to the prompt together with the question.  \n- **Generate**: the LLM writes the answer using the retrieved text.  \n- **Chunk**: a small piece of a document, such as a paragraph, used for searching.  \n- **Chunking**: the process of splitting documents into chunks.  \n- **Embedding**: turning text into a list of numbers that capture its meaning.  \n- **Vector**: the list of numbers produced by an embedding; it represents meaning.  \n- **Vector database**: a storage system that holds vectors and can quickly find similar ones.  \n- **Knowledge base**: the collection of documents that RAG searches.  \n- **Retriever**: the part of the system that runs the similarity search.  \n- **Similarity search**: finding vectors whose meaning is close to the query vector.  \n- **Cosine similarity**: a mathematical measure that tells how close two vectors are.  \n- **Top‑k**: the number of chunks kept after similarity search.  \n- **Prompt**: the text given to the LLM, including question, retrieved chunks, and instructions.  \n- **Token**: a small unit of text counted by the LLM.  \n- **Context window**: the maximum number of tokens the LLM can read at once.  \n- **Hallucination**: when the LLM produces text that is false or made up.  \n- **Fine‑tuning**: further training of the LLM that changes its internal weights.  \n\n## Recap\nRAG follows three steps: Retrieve, Augment, Generate.  \nRetrieve finds relevant chunks from a knowledge base.  \nAugment adds those chunks to the prompt.  \nGenerate lets the LLM write the answer.  \n\nSupporting ideas include chunking, embeddings, vector databases, similarity search, top‑k, context window, and fine‑tuning comparison.\n\n## Check your understanding\n1. Which step comes first: retrieving documents or generating the answer?  \n   **Answer:** Retrieve comes first.  \n\n2. What is the purpose of a vector database?  \n   **Answer:** It stores vectors so the system can quickly find similar ones.  \n\n3. Name one limitation of RAG that can still cause wrong answers.  \n   **Answer:** Poor retrieval quality can return irrelevant chunks, leading to wrong answers.  \n\n4. How does RAG differ from fine‑tuning in terms of model changes?  \n   **Answer:** RAG does not change the model’s weights; fine‑tuning updates the model itself."
+}
