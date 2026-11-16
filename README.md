@@ -60,22 +60,30 @@ plan -> generate -> evaluate (12 checks) -> pass?  yes -> finalize -> reflect (m
 
 ---
 
-## Quick start (Windows PowerShell)
+## Setup and run (Windows PowerShell)
 
 ```powershell
-# 1. Create a virtual environment and install dependencies (Python 3.11+)
+# 1. Get the code
+git clone https://github.com/bordoloidarsana93-wq/self-evaluating-lesson-generator.git
+cd self-evaluating-lesson-generator
+
+# 2. Create a virtual environment and install dependencies (Python 3.11+)
 py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 
-# 2. Add your API key
+# 3. Add your API key
 copy .env.example .env      # then open .env and paste your key, e.g. GROQ_API_KEY=...
 
-# 3. Run the tests (no API key needed - they use a fake LLM)
+# 4. Run the tests (no API key needed - they use a fake LLM)
 .\.venv\Scripts\python.exe -m pytest -q
 
-# 4. Generate a lesson
+# 5. Generate a lesson
 .\.venv\Scripts\python.exe -m lesson_agent run
 ```
+
+**Getting a free API key:** sign up at [console.groq.com](https://console.groq.com), open
+**API Keys**, click **Create API Key**, and paste it into `.env` as `GROQ_API_KEY=...`.
+No credit card is needed.
 
 On macOS/Linux use `python3 -m venv .venv` and `.venv/bin/python` instead.
 
